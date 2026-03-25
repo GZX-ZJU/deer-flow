@@ -143,6 +143,14 @@ services:
       - DEER_FLOW_HOST_BASE_DIR=${DEER_FLOW_ROOT}/backend/.deer-flow
       - DEER_FLOW_HOST_SKILLS_PATH=${DEER_FLOW_ROOT}/skills
       - DEER_FLOW_SANDBOX_HOST=host.docker.internal
+      # - HTTP_PROXY=http://host.docker.internal:7897
+      # - HTTPS_PROXY=http://host.docker.internal:7897
+      # - ALL_PROXY=http://host.docker.internal:7897
+      # - NO_PROXY=localhost,127.0.0.1,host.docker.internal,gateway,langgraph,frontend,nginx,.temu.team,temu.team
+      # - http_proxy=http://host.docker.internal:7897
+      # - https_proxy=http://host.docker.internal:7897
+      # - all_proxy=http://host.docker.internal:7897
+      # - no_proxy=localhost,127.0.0.1,host.docker.internal,gateway,langgraph,frontend,nginx,.temu.team,temu.team
     env_file:
       - ../.env
     extra_hosts:
@@ -192,6 +200,14 @@ services:
       - DEER_FLOW_HOST_BASE_DIR=${DEER_FLOW_ROOT}/backend/.deer-flow
       - DEER_FLOW_HOST_SKILLS_PATH=${DEER_FLOW_ROOT}/skills
       - DEER_FLOW_SANDBOX_HOST=host.docker.internal
+      # - HTTP_PROXY=http://host.docker.internal:7897
+      # - HTTPS_PROXY=http://host.docker.internal:7897
+      # - ALL_PROXY=http://host.docker.internal:7897
+      # - NO_PROXY=localhost,127.0.0.1,host.docker.internal,gateway,langgraph,frontend,nginx,.temu.team,temu.team
+      # - http_proxy=http://host.docker.internal:7897
+      # - https_proxy=http://host.docker.internal:7897
+      # - all_proxy=http://host.docker.internal:7897
+      # - no_proxy=localhost,127.0.0.1,host.docker.internal,gateway,langgraph,frontend,nginx,.temu.team,temu.team
     env_file:
       - ../.env
     extra_hosts:
