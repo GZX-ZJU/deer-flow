@@ -3,6 +3,8 @@ import { useMemo } from "react";
 import { visit } from "unist-util-visit";
 import type { BuildVisitor } from "unist-util-visit";
 
+import { splitTextForAnimation } from "./split-words";
+
 export function rehypeSplitWordsIntoSpans() {
   return (tree: Root) => {
     visit(tree, "element", ((node: Element) => {
@@ -15,20 +17,20 @@ export function rehypeSplitWordsIntoSpans() {
         const newChildren: Array<ElementContent> = [];
         node.children.forEach((child) => {
           if (child.type === "text") {
-            const segmenter = new Intl.Segmenter("zh", { granularity: "word" });
-            const segments = segmenter.segment(child.value);
-            const words = Array.from(segments)
-              .map((segment) => segment.segment)
-              .filter(Boolean);
+            const words = splitTextForAnimation(child.value);
             words.forEach((word: string) => {
-              newChildren.push({
-                type: "element",
-                tagName: "span",
-                properties: {
-                  className: "animate-fade-in",
-                },
-                children: [{ type: "text", value: word }],
-              });
+              if (words.length === 1 && word === child.value) {
+                newChildren.push({ type: "text", value: word });
+              } else {
+                newChildren.push({
+                  type: "element",
+                  tagName: "span",
+                  properties: {
+                    className: "animate-fade-in",
+                  },
+                  children: [{ type: "text", value: word }],
+                });
+              }
             });
           } else {
             newChildren.push(child);
