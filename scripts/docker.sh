@@ -215,6 +215,16 @@ start() {
 
     echo "Building and starting containers..."
     cd "$DOCKER_DIR" && $COMPOSE_CMD up --build -d --remove-orphans $services
+
+    if "$SCRIPT_DIR/wait-for-port.sh" 2026 60 "Nginx"; then
+        echo -e "${BLUE}Prewarming frontend routes...${NC}"
+        "$SCRIPT_DIR/prewarm-frontend.sh" "http://localhost:2026" || true
+        echo ""
+    else
+        echo -e "${YELLOW}⚠ Skipping frontend prewarm because localhost:2026 did not become ready in time.${NC}"
+        echo ""
+    fi
+
     echo ""
     echo "=========================================="
     echo "  DeerFlow Docker is starting!"
