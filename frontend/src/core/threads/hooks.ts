@@ -526,15 +526,19 @@ export function useThreadStream({
 export function useThreads(
   params: Parameters<ThreadsClient["search"]>[0] = {
     limit: 50,
-    sortBy: "updated_at",
-    sortOrder: "desc",
-    select: ["thread_id", "updated_at", "values", "context"],
   },
 ) {
   const apiClient = getAPIClient();
   return useQuery<AgentThread[]>({
     queryKey: ["threads", "search", params],
     queryFn: async () => {
+      const sortOrder = params.sortOrder ?? "desc";
+      const searchParams = {
+        limit: params.limit,
+        offset: params.offset,
+        metadata: params.metadata,
+        status: params.status,
+      };
       const maxResults = params.limit;
       const initialOffset = params.offset ?? 0;
       const DEFAULT_PAGE_SIZE = 50;
@@ -543,8 +547,12 @@ export function useThreads(
       // delegate to a single search call with the original parameters.
       if (maxResults !== undefined && maxResults <= 0) {
         const response =
-          await apiClient.threads.search<AgentThreadState>(params);
-        return response as AgentThread[];
+          await apiClient.threads.search<AgentThreadState>(searchParams);
+        return (response as AgentThread[]).sort((a, b) => {
+          const left = Number(a.updated_at ?? 0);
+          const right = Number(b.updated_at ?? 0);
+          return sortOrder === "asc" ? left - right : right - left;
+        });
       }
 
       const pageSize =
@@ -570,7 +578,7 @@ export function useThreads(
         }
 
         const response = (await apiClient.threads.search<AgentThreadState>({
-          ...params,
+          ...searchParams,
           limit: currentLimit,
           offset,
         })) as AgentThread[];
@@ -583,6 +591,12 @@ export function useThreads(
 
         offset += response.length;
       }
+
+      threads.sort((a, b) => {
+        const left = Number(a.updated_at ?? 0);
+        const right = Number(b.updated_at ?? 0);
+        return sortOrder === "asc" ? left - right : right - left;
+      });
 
       return threads;
     },
